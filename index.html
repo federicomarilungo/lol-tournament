@@ -11,6 +11,9 @@
     <div class="container">
         <h1>🏆 Torneo de League of Legends 🏆</h1>
 
+        <!-- Sistema de Notificaciones -->
+        <div id="notification-container" class="notification-container"></div>
+
         <!-- Controles Globales de Datos -->
         <div class="global-controls">
             <button class="btn btn-export" onclick="exportData()">💾 Exportar Datos</button>
@@ -68,14 +71,15 @@
 
             <!-- Pestaña de Configuración -->
             <div id="config" class="tab-content">
-                <h2>Configuración de Puntos</h2>
+                <h2>⚙️ Configuración</h2>
                 <div class="config-container">
                     <div class="config-section">
-                        <h3>Puntos de Poder por Rango</h3>
+                        <h3>🎯 Configuración de Puntos de Poder</h3>
+                        <h4>💎 Puntos de poder por Rango</h4>
                         <div class="config-grid" id="rankPointsConfig"></div>
                     </div>
                     <div class="config-section">
-                        <h3>Puntos por Posición en Ranking</h3>
+                        <h4>🏆 Puntos de poder según posición en el Ranking</h4>
                         <div class="config-grid" id="victoryPointsConfig"></div>
                     </div>
                 </div>
@@ -94,6 +98,10 @@
                         <option value="Oro">Oro</option>
                         <option value="Platino">Platino</option>
                         <option value="Esmeralda">Esmeralda</option>
+                        <option value="Diamante">Diamante</option>
+                        <option value="Maestro">Maestro</option>
+                        <option value="Gran Maestro">Gran Maestro</option>
+                        <option value="Aspirante">Aspirante</option>
                     </select>
                     <button type="submit">➕ Añadir Jugador</button>
                 </form>
@@ -138,6 +146,14 @@
                         </div>
                         <ul class="team-players" id="redTeamList"></ul>
                     </div>
+                </div>
+                <div class="auto-team-controls">
+                    <button class="btn btn-auto-team" onclick="generateBalancedTeams()" id="autoTeamBtn">
+                        🎲 Armar Equipos Automáticamente
+                    </button>
+                    <button class="btn btn-clear-teams" onclick="clearTeams()">
+                        🗑️ Limpiar Equipos
+                    </button>
                 </div>
                 <div class="team-controls">
                     <button class="btn btn-victory-blue" onclick="declareVictory('blue')" id="blueVictoryBtn" disabled>

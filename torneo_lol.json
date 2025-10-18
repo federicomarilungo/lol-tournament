@@ -74,7 +74,11 @@
       "Plata": 35,
       "Oro": 55,
       "Platino": 80,
-      "Esmeralda": 110
+      "Esmeralda": 110,
+      "Diamante": 150,
+      "Maestro": 200,
+      "Gran Maestro": 270,
+      "Aspirante": 350
     },
     "victoryPositions": [50, 40, 35, 30, 25, 20, 15, 10, 5, 0]
   }

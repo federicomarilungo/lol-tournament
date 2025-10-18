@@ -11,14 +11,57 @@ const POWER_POINTS = {
         'Plata': 35,
         'Oro': 55,
         'Platino': 80,
-        'Esmeralda': 110
+        'Esmeralda': 110,
+        'Diamante': 150,
+        'Maestro': 200,
+        'Gran Maestro': 270,
+        'Aspirante': 350
     },
     victoryPositions: [50, 40, 35, 30, 25, 20, 15, 10, 5, 0]
 };
 
+// ============= SISTEMA DE NOTIFICACIONES =============
+function showNotification(title, message, type = 'info', duration = 4000) {
+    const container = document.getElementById('notification-container');
+    
+    const notification = document.createElement('div');
+    notification.className = `notification ${type}`;
+    
+    const icon = type === 'success' ? '✅' : type === 'info' ? 'ℹ️' : '🎲';
+    
+    notification.innerHTML = `
+        <div class="notification-icon">${icon}</div>
+        <div class="notification-content">
+            <div class="notification-title">${title}</div>
+            <div class="notification-message">${message}</div>
+        </div>
+    `;
+    
+    container.appendChild(notification);
+    
+    // Mostrar notificación con animación
+    setTimeout(() => {
+        notification.classList.add('show');
+    }, 100);
+    
+    // Ocultar después del tiempo especificado
+    setTimeout(() => {
+        notification.classList.remove('show');
+        setTimeout(() => {
+            if (container.contains(notification)) {
+                container.removeChild(notification);
+            }
+        }, 300);
+    }, duration);
+}
+
 // ============= FUNCIONES DE UTILIDAD =============
 function generateId() {
     return Date.now() + Math.random();
+}
+
+function getRankClass(rank) {
+    return 'rank-' + rank.toLowerCase().replace(/\s+/g, '-');
 }
 
 // ============= CÁLCULO DE PUNTOS DE PODER =============
@@ -69,11 +112,26 @@ function addPlayer(name, rank) {
     };
     players.push(player);
     updateUI();
+    
+    showNotification(
+        'Jugador agregado',
+        `${name} (${rank}) se ha unido al torneo`,
+        'success'
+    );
 }
 
 function deletePlayer(id) {
+    const player = players.find(p => p.id === id);
     players = players.filter(player => player.id !== id);
     updateUI();
+    
+    if (player) {
+        showNotification(
+            'Jugador eliminado',
+            `${player.nombre} ha sido eliminado del torneo`,
+            'info'
+        );
+    }
 }
 
 function editPlayerRank(id, newRank) {
@@ -85,7 +143,7 @@ function editPlayerRank(id, newRank) {
 }
 
 function makeRankEditable(playerId, element) {
-    const ranks = ['Hierro', 'Bronce', 'Plata', 'Oro', 'Platino', 'Esmeralda'];
+    const ranks = Object.keys(POWER_POINTS.ranks);
     const player = players.find(player => player.id === playerId);
     if (!player) return;
 
@@ -148,15 +206,26 @@ function calculateTeamPower(team) {
 
 function declareVictory(team) {
     const winningTeam = team === 'blue' ? blueTeam : redTeam;
+    const teamName = team === 'blue' ? 'Azul' : 'Rojo';
+    const teamEmoji = team === 'blue' ? '🔵' : '🔴';
     
     winningTeam.forEach(player => {
         const p = players.find(p => p.id === player.id);
         if (p) p.victorias++;
     });
 
+    const playerNames = winningTeam.map(p => p.nombre).join(', ');
+    
     blueTeam = [];
     redTeam = [];
     updateUI();
+    
+    showNotification(
+        `${teamEmoji} Victoria del Equipo ${teamName}!`,
+        `Ganadores: ${playerNames}`,
+        'success',
+        5000
+    );
 }
 
 // ============= FUNCIONES DE CONFIGURACIÓN =============
@@ -166,11 +235,16 @@ function updateRankPointsConfig() {
     
     container.innerHTML = ranks.map(rank => `
         <div class="config-item">
-            <label>${rank}</label>
-            <input type="number" 
-                   value="${POWER_POINTS.ranks[rank]}" 
-                   onchange="updateRankPoints('${rank}', this.value)"
-                   min="0">
+            <label class="config-label">${rank}</label>
+            <div class="input-controls">
+                <button class="control-btn" onclick="adjustRankPoints('${rank}', -5)">←</button>
+                <input type="number" 
+                       value="${POWER_POINTS.ranks[rank]}" 
+                       onchange="updateRankPoints('${rank}', this.value)"
+                       min="0"
+                       step="5">
+                <button class="control-btn" onclick="adjustRankPoints('${rank}', 5)">→</button>
+            </div>
         </div>
     `).join('');
 }
@@ -180,13 +254,34 @@ function updateVictoryPointsConfig() {
     
     container.innerHTML = POWER_POINTS.victoryPositions.map((points, index) => `
         <div class="config-item">
-            <label>Posición ${index + 1}º</label>
-            <input type="number" 
-                   value="${points}" 
-                   onchange="updateVictoryPoints(${index}, this.value)"
-                   min="0">
+            <label class="config-label">Posición ${index + 1}º</label>
+            <div class="input-controls">
+                <button class="control-btn" onclick="adjustVictoryPoints(${index}, -5)">←</button>
+                <input type="number" 
+                       value="${points}" 
+                       onchange="updateVictoryPoints(${index}, this.value)"
+                       min="0"
+                       step="5">
+                <button class="control-btn" onclick="adjustVictoryPoints(${index}, 5)">→</button>
+            </div>
         </div>
     `).join('');
+}
+
+function adjustRankPoints(rank, adjustment) {
+    const currentValue = POWER_POINTS.ranks[rank];
+    const newValue = Math.max(0, currentValue + adjustment);
+    POWER_POINTS.ranks[rank] = newValue;
+    updateRankPointsConfig();
+    updateUI();
+}
+
+function adjustVictoryPoints(position, adjustment) {
+    const currentValue = POWER_POINTS.victoryPositions[position];
+    const newValue = Math.max(0, currentValue + adjustment);
+    POWER_POINTS.victoryPositions[position] = newValue;
+    updateVictoryPointsConfig();
+    updateUI();
 }
 
 function updateRankPoints(rank, value) {
@@ -246,7 +341,11 @@ function importData(event) {
                 
                 updateUI();
             } catch (error) {
-                alert('Error al importar el archivo: ' + error.message);
+                showNotification(
+                    'Error al importar',
+                    'No se pudo importar el archivo: ' + error.message,
+                    'info'
+                );
             }
         };
         reader.readAsText(file);
@@ -260,7 +359,7 @@ function updatePlayersList() {
     playersList.innerHTML = '';
 
     getRankedPlayers().forEach(player => {
-        const rankClass = 'rank-' + player.rango.toLowerCase();
+        const rankClass = getRankClass(player.rango);
         const li = document.createElement('li');
         li.className = 'player-item';
         li.innerHTML = `
@@ -308,7 +407,7 @@ function updateRankingList() {
         const basePower = calculateBasePowerPoints(player.rango);
         const victoryPower = calculateVictoryPoints(player);
         const totalPower = basePower + victoryPower;
-        const rankClass = 'rank-' + player.rango.toLowerCase();
+        const rankClass = getRankClass(player.rango);
 
         html += `
             <tr>
@@ -331,7 +430,7 @@ function updateTeamsList() {
     const blueTeamList = document.getElementById('blueTeamList');
     blueTeamList.innerHTML = blueTeam.map(player => {
         const playerWithPower = getRankedPlayers().find(p => p.id === player.id);
-        const rankClass = 'rank-' + player.rango.toLowerCase();
+        const rankClass = getRankClass(player.rango);
         return `
             <li class="team-player">
                 <div class="team-player-info">
@@ -347,7 +446,7 @@ function updateTeamsList() {
     const redTeamList = document.getElementById('redTeamList');
     redTeamList.innerHTML = redTeam.map(player => {
         const playerWithPower = getRankedPlayers().find(p => p.id === player.id);
-        const rankClass = 'rank-' + player.rango.toLowerCase();
+        const rankClass = getRankClass(player.rango);
         return `
             <li class="team-player">
                 <div class="team-player-info">
@@ -372,7 +471,7 @@ function updateTeamsList() {
     playerSelectionList.innerHTML = getRankedPlayers()
         .filter(player => !assignedPlayers.includes(player.id))
         .map(player => {
-            const rankClass = 'rank-' + player.rango.toLowerCase();
+            const rankClass = getRankClass(player.rango);
             return `
                 <tr>
                     <td>${player.nombre}</td>
@@ -399,6 +498,20 @@ function updateUI() {
     updateTeamsList();
     updateRankPointsConfig();
     updateVictoryPointsConfig();
+    updateAutoTeamButton();
+}
+
+function updateAutoTeamButton() {
+    const autoTeamBtn = document.getElementById('autoTeamBtn');
+    if (autoTeamBtn) {
+        if (players.length < 2) {
+            autoTeamBtn.disabled = true;
+            autoTeamBtn.textContent = '🎲 Necesitas al menos 2 jugadores';
+        } else {
+            autoTeamBtn.disabled = false;
+            autoTeamBtn.textContent = '🎲 Armar Equipos Automáticamente';
+        }
+    }
 }
 
 // ============= SISTEMA DE PESTAÑAS =============
@@ -414,8 +527,127 @@ function switchTab(tabName) {
     document.querySelector(`[data-tab="${tabName}"]`).classList.add('active');
 }
 
+// ============= ARMADO AUTOMÁTICO DE EQUIPOS =============
+function shuffleArray(array) {
+    const shuffled = [...array];
+    for (let i = shuffled.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+    }
+    return shuffled;
+}
+
+function calculateTeamPower(team) {
+    return team.reduce((total, player) => {
+        const playerData = getRankedPlayers().find(p => p.id === player.id);
+        return total + (playerData ? playerData.powerPoints : 0);
+    }, 0);
+}
+
+function generateBalancedTeams() {
+    if (players.length < 2) {
+        showNotification(
+            'Equipos insuficientes',
+            'Necesitas al menos 2 jugadores para armar equipos.',
+            'info'
+        );
+        return;
+    }
+
+    // Limpiar equipos existentes
+    blueTeam = [];
+    redTeam = [];
+
+    // Obtener jugadores ordenados por poder
+    const rankedPlayers = getRankedPlayers();
+    
+    // Si hay menos de 10 jugadores, usar todos
+    const availablePlayers = rankedPlayers.slice(0, 10);
+    
+    // Algoritmo de balanceo por diferencias de poder
+    let bestBlueTeam = [];
+    let bestRedTeam = [];
+    let smallestDifference = Infinity;
+    
+    // Intentar múltiples combinaciones aleatorias para encontrar la más balanceada
+    for (let attempt = 0; attempt < 1000; attempt++) {
+        const shuffledPlayers = shuffleArray(availablePlayers);
+        const tempBlueTeam = [];
+        const tempRedTeam = [];
+        
+        // Distribuir jugadores alternadamente pero con lógica de balanceo
+        shuffledPlayers.forEach((player, index) => {
+            const bluePower = calculateTeamPower(tempBlueTeam);
+            const redPower = calculateTeamPower(tempRedTeam);
+            
+            // Si un equipo tiene menos jugadores, agregar ahí
+            if (tempBlueTeam.length < tempRedTeam.length) {
+                tempBlueTeam.push(player);
+            } else if (tempRedTeam.length < tempBlueTeam.length) {
+                tempRedTeam.push(player);
+            } else {
+                // Si tienen igual cantidad, agregar al equipo con menos poder
+                if (bluePower <= redPower) {
+                    tempBlueTeam.push(player);
+                } else {
+                    tempRedTeam.push(player);
+                }
+            }
+            
+            // Limitar a 5 jugadores por equipo
+            if (tempBlueTeam.length >= 5 && tempRedTeam.length >= 5) {
+                return;
+            }
+        });
+        
+        const bluePower = calculateTeamPower(tempBlueTeam);
+        const redPower = calculateTeamPower(tempRedTeam);
+        const difference = Math.abs(bluePower - redPower);
+        
+        if (difference < smallestDifference) {
+            smallestDifference = difference;
+            bestBlueTeam = [...tempBlueTeam];
+            bestRedTeam = [...tempRedTeam];
+        }
+        
+        // Si encontramos una diferencia muy pequeña, no seguir buscando
+        if (difference <= 10) break;
+    }
+    
+    blueTeam = bestBlueTeam;
+    redTeam = bestRedTeam;
+    
+    updateUI();
+    
+    // Mostrar información del balanceo
+    const bluePower = calculateTeamPower(blueTeam);
+    const redPower = calculateTeamPower(redTeam);
+    const difference = Math.abs(bluePower - redPower);
+    
+    setTimeout(() => {
+        showNotification(
+            '🎲 Equipos generados automáticamente',
+            `🔵 Equipo Azul: ${bluePower} puntos\n🔴 Equipo Rojo: ${redPower} puntos\n📊 Diferencia: ${difference} puntos`,
+            'success',
+            6000
+        );
+    }, 500);
+}
+
+function clearTeams() {
+    blueTeam = [];
+    redTeam = [];
+    updateUI();
+    
+    showNotification(
+        'Equipos limpiados',
+        'Ambos equipos han sido vaciados',
+        'info'
+    );
+}
+
 // ============= INICIALIZACIÓN =============
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', function() {
     updateRankPointsConfig();
     updateVictoryPointsConfig();
     

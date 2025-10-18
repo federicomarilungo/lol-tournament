@@ -31,6 +31,69 @@ h1, h2 {
     text-align: center;
 }
 
+/* Sistema de Notificaciones */
+.notification-container {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 1000;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.notification {
+    background: linear-gradient(135deg, var(--color-container), var(--color-background));
+    border: 2px solid var(--color-accent-cyan);
+    border-radius: 8px;
+    padding: 1rem 1.5rem;
+    color: var(--color-text);
+    min-width: 300px;
+    max-width: 400px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    transform: translateX(100%);
+    opacity: 0;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+}
+
+.notification.show {
+    transform: translateX(0);
+    opacity: 1;
+}
+
+.notification.success {
+    border-color: var(--color-accent-gold);
+    background: linear-gradient(135deg, rgba(200, 155, 60, 0.2), var(--color-container));
+}
+
+.notification.info {
+    border-color: var(--color-accent-cyan);
+    background: linear-gradient(135deg, rgba(10, 200, 185, 0.2), var(--color-container));
+}
+
+.notification-icon {
+    font-size: 1.5rem;
+    flex-shrink: 0;
+}
+
+.notification-content {
+    flex: 1;
+}
+
+.notification-title {
+    font-weight: bold;
+    margin-bottom: 0.3rem;
+    color: var(--color-accent-gold);
+}
+
+.notification-message {
+    font-size: 0.9rem;
+    line-height: 1.4;
+}
+
 /* Sistema de Pestañas */
 .tabs-container {
     background-color: var(--color-container);
@@ -181,6 +244,16 @@ h1, h2 {
     border-radius: 4px;
 }
 
+.player-form select option {
+    background-color: var(--color-background);
+    color: var(--color-text);
+    padding: 0.5rem;
+}
+
+.player-form select option:hover {
+    background-color: var(--color-container);
+}
+
 .player-form button {
     background-color: var(--color-accent-cyan);
     color: var(--color-background);
@@ -245,12 +318,51 @@ h1, h2 {
     box-shadow: 0 0 10px rgba(0, 212, 170, 0.5);
 }
 
+.rank-display.rank-diamante,
+.ranking-table .rank-diamante {
+    background: linear-gradient(135deg, #b9f2ff, #85c9f0);
+    color: #0a1428;
+    box-shadow: 0 0 10px rgba(185, 242, 255, 0.5);
+}
+
+.rank-display.rank-maestro,
+.ranking-table .rank-maestro {
+    background: linear-gradient(135deg, #8e44ad, #6c3483);
+    color: #ffffff;
+    box-shadow: 0 0 10px rgba(142, 68, 173, 0.5);
+}
+
+.rank-display.rank-gran-maestro,
+.ranking-table .rank-gran-maestro {
+    background: linear-gradient(135deg, #e74c3c, #c0392b);
+    color: #ffffff;
+    box-shadow: 0 0 15px rgba(231, 76, 60, 0.6);
+}
+
+.rank-display.rank-aspirante,
+.ranking-table .rank-aspirante {
+    background: linear-gradient(135deg, #f1c40f, #f39c12);
+    color: #0a1428;
+    box-shadow: 0 0 20px rgba(241, 196, 15, 0.8);
+    border: 2px solid #f39c12;
+}
+
 .rank-select {
     padding: 0.2rem 0.5rem;
     border: 1px solid var(--color-accent-cyan);
     background-color: var(--color-background);
     color: var(--color-text);
     border-radius: 4px;
+}
+
+.rank-select option {
+    background-color: var(--color-background);
+    color: var(--color-text);
+    padding: 0.3rem;
+}
+
+.rank-select option:hover {
+    background-color: var(--color-container);
 }
 
 .players-list {
@@ -410,6 +522,63 @@ h1, h2 {
     color: var(--color-background);
 }
 
+.auto-team-controls {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    margin-top: 1.5rem;
+    margin-bottom: 1rem;
+}
+
+.btn-auto-team {
+    background: linear-gradient(135deg, var(--color-accent-gold), #e6b800);
+    color: var(--color-background);
+    font-weight: bold;
+    padding: 0.8rem 1.5rem;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s;
+    font-size: 1rem;
+    box-shadow: 0 4px 15px rgba(200, 155, 60, 0.3);
+}
+
+.btn-auto-team:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(200, 155, 60, 0.4);
+    background: linear-gradient(135deg, #e6b800, var(--color-accent-gold));
+}
+
+.btn-auto-team:disabled {
+    background: #666;
+    color: #999;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+}
+
+.btn-auto-team:disabled:hover {
+    transform: none;
+    box-shadow: none;
+    background: #666;
+}
+
+.btn-clear-teams {
+    background-color: #ff6b6b;
+    color: white;
+    border: none;
+    padding: 0.8rem 1.5rem;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s;
+    font-size: 1rem;
+}
+
+.btn-clear-teams:hover {
+    background-color: #ff5252;
+    transform: translateY(-2px);
+}
+
 .team-controls {
     display: flex;
     justify-content: center;
@@ -440,9 +609,18 @@ h1, h2 {
 }
 
 .config-section h3 {
+    color: var(--color-accent-gold);
+    margin-bottom: 1rem;
+    font-size: 1.3rem;
+    text-align: center;
+}
+
+.config-section h4 {
     color: var(--color-accent-cyan);
     margin-bottom: 1rem;
     font-size: 1.1rem;
+    border-left: 3px solid var(--color-accent-cyan);
+    padding-left: 1rem;
 }
 
 .config-grid {
@@ -452,31 +630,110 @@ h1, h2 {
 }
 
 .config-item {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 1rem;
+    display: flex;
+    justify-content: space-between;
     align-items: center;
-    padding: 0.5rem;
+    padding: 1rem;
     background-color: var(--color-background);
-    border-radius: 4px;
+    border-radius: 8px;
+    border: 1px solid rgba(200, 155, 60, 0.2);
+    transition: all 0.2s;
+    gap: 1rem;
 }
 
-.config-item label {
+.config-item:hover {
+    border-color: var(--color-accent-gold);
+    box-shadow: 0 2px 8px rgba(200, 155, 60, 0.1);
+}
+
+.config-label {
     color: var(--color-text);
+    font-weight: 600;
+    font-size: 0.95rem;
+    flex: 1;
 }
 
-.config-item input {
-    padding: 0.4rem;
-    border: 1px solid var(--color-accent-cyan);
+.input-controls {
+    display: flex;
+    align-items: center;
     background-color: var(--color-container);
+    border-radius: 6px;
+    border: 1px solid var(--color-accent-cyan);
+    overflow: hidden;
+    min-width: 120px;
+}
+
+.control-btn {
+    background-color: var(--color-accent-cyan);
+    color: var(--color-background);
+    border: none;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-weight: bold;
+    font-size: 1.1rem;
+    transition: all 0.2s;
+    flex-shrink: 0;
+}
+
+.control-btn:hover {
+    background-color: var(--color-accent-gold);
+}
+
+.control-btn:active {
+    transform: scale(0.95);
+}
+
+.input-controls input {
+    flex: 1;
+    padding: 0.5rem 0.3rem;
+    border: none;
+    background-color: transparent;
     color: var(--color-text);
-    border-radius: 4px;
     text-align: center;
+    font-weight: 600;
+    font-size: 0.9rem;
+    min-width: 0;
+}
+
+.input-controls input:focus {
+    outline: none;
+    background-color: rgba(10, 200, 185, 0.1);
 }
 
 @media (max-width: 768px) {
+    .notification-container {
+        top: 10px;
+        right: 10px;
+        left: 10px;
+    }
+    
+    .notification {
+        min-width: auto;
+        max-width: none;
+    }
+    
     .config-container {
         grid-template-columns: 1fr;
+    }
+    
+    .config-item {
+        flex-direction: column;
+        align-items: stretch;
+        text-align: center;
+        gap: 0.8rem;
+    }
+    
+    .config-label {
+        text-align: center;
+    }
+    
+    .input-controls {
+        align-self: center;
+        min-width: 140px;
     }
     
     .tabs-header {
