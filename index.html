@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Torneo LoL - Conurbano Edition</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <h1>🏆 Torneo de League of Legends 🏆</h1>
+
+        <!-- Controles Globales de Datos -->
+        <div class="global-controls">
+            <button class="btn btn-export" onclick="exportData()">💾 Exportar Datos</button>
+            <input type="file" id="importFile" accept=".json" style="display: none;" onchange="importData(event)">
+            <button class="btn btn-import" onclick="document.getElementById('importFile').click()">📁 Importar Datos</button>
+        </div>
+
+        <!-- Sistema de Pestañas -->
+        <div class="tabs-container">
+            <div class="tabs-header">
+                <button class="tab-button active" data-tab="welcome" onclick="switchTab('welcome')">
+                    🏠 Bienvenida
+                </button>
+                <button class="tab-button" data-tab="config" onclick="switchTab('config')">
+                    ⚙️ Configuración
+                </button>
+                <button class="tab-button" data-tab="players" onclick="switchTab('players')">
+                    👥 Jugadores
+                </button>
+                <button class="tab-button" data-tab="ranking" onclick="switchTab('ranking')">
+                    📊 Ranking
+                </button>
+                <button class="tab-button" data-tab="teams" onclick="switchTab('teams')">
+                    ⚔️ Equipos
+                </button>
+            </div>
+
+            <!-- Pestaña de Bienvenida -->
+            <div id="welcome" class="tab-content active">
+                <div class="welcome-container">
+                    <div class="welcome-icon">🎮</div>
+                    <h2 class="welcome-title">Bienvenido al Torneo Amistoso de League of Legends del Conurbano</h2>
+                    
+                    <div class="welcome-text">
+                        <span class="welcome-emoji">🌿</span>
+                        Prepará esos porros y tu birrita sin alcohol
+                        <span class="welcome-emoji">🍺</span>
+                    </div>
+                    
+                    <div class="welcome-text highlight">
+                        <span class="welcome-emoji">⚔️</span>
+                        Jugaremos varias partidas donde cada uno subirá puntos según gane, y los equipos se irán rearmando en función del poder de cada uno
+                        <span class="welcome-emoji">📈</span>
+                    </div>
+                    
+                    <div class="welcome-text warning">
+                        <span class="welcome-emoji">😈</span>
+                        ¡Preparate, y ponete cómodo, porque vas a chupar la pija de los que mejor juegan!
+                        <span class="welcome-emoji">🔥</span>
+                    </div>
+
+                    <div class="welcome-icon">🏆</div>
+                </div>
+            </div>
+
+            <!-- Pestaña de Configuración -->
+            <div id="config" class="tab-content">
+                <h2>Configuración de Puntos</h2>
+                <div class="config-container">
+                    <div class="config-section">
+                        <h3>Puntos de Poder por Rango</h3>
+                        <div class="config-grid" id="rankPointsConfig"></div>
+                    </div>
+                    <div class="config-section">
+                        <h3>Puntos por Posición en Ranking</h3>
+                        <div class="config-grid" id="victoryPointsConfig"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Pestaña de Jugadores -->
+            <div id="players" class="tab-content">
+                <h2>Administración de Jugadores</h2>
+                <form class="player-form" id="playerForm">
+                    <input type="text" id="playerName" placeholder="Nombre del jugador" required>
+                    <select id="playerRank" required>
+                        <option value="">Selecciona un rango</option>
+                        <option value="Hierro">Hierro</option>
+                        <option value="Bronce">Bronce</option>
+                        <option value="Plata">Plata</option>
+                        <option value="Oro">Oro</option>
+                        <option value="Platino">Platino</option>
+                        <option value="Esmeralda">Esmeralda</option>
+                    </select>
+                    <button type="submit">➕ Añadir Jugador</button>
+                </form>
+                <ul class="players-list" id="playersList"></ul>
+            </div>
+
+            <!-- Pestaña de Ranking -->
+            <div id="ranking" class="tab-content">
+                <h2>Ranking de Victorias</h2>
+                <div id="rankingList"></div>
+            </div>
+
+            <!-- Pestaña de Equipos -->
+            <div id="teams" class="tab-content">
+                <h2>Creador de Equipos</h2>
+                <div class="player-selection">
+                    <h3>Selección de Jugadores</h3>
+                    <table class="ranking-table">
+                        <thead>
+                            <tr>
+                                <th>Jugador</th>
+                                <th>Rango</th>
+                                <th>Puntos de Poder</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody id="playerSelectionList"></tbody>
+                    </table>
+                </div>
+                <div class="team-builder">
+                    <div class="team-container team-blue">
+                        <div class="team-header">
+                            <h3>🔵 Equipo Azul</h3>
+                            <span class="team-power" id="bluePower">0 puntos</span>
+                        </div>
+                        <ul class="team-players" id="blueTeamList"></ul>
+                    </div>
+                    <div class="team-container team-red">
+                        <div class="team-header">
+                            <h3>🔴 Equipo Rojo</h3>
+                            <span class="team-power" id="redPower">0 puntos</span>
+                        </div>
+                        <ul class="team-players" id="redTeamList"></ul>
+                    </div>
+                </div>
+                <div class="team-controls">
+                    <button class="btn btn-victory-blue" onclick="declareVictory('blue')" id="blueVictoryBtn" disabled>
+                        🏆 Victoria Equipo Azul
+                    </button>
+                    <button class="btn btn-victory-red" onclick="declareVictory('red')" id="redVictoryBtn" disabled>
+                        🏆 Victoria Equipo Rojo
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>

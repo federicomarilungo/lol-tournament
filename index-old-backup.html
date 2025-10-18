@@ -1,0 +1,865 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Torneo LoL</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --color-background: #0A1428;
+            --color-container: #1E283A;
+            --color-accent-gold: #C89B3C;
+            --color-accent-cyan: #0AC8B9;
+            --color-text: #E5E5E5;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background-color: var(--color-background);
+            color: var(--color-text);
+            line-height: 1.6;
+            padding: 2rem;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        h1, h2 {
+            color: var(--color-accent-gold);
+            margin-bottom: 1rem;
+            text-align: center;
+        }
+
+        .section {
+            background-color: var(--color-container);
+            padding: 2rem;
+            margin-bottom: 2rem;
+            border-radius: 8px;
+            border: 1px solid var(--color-accent-gold);
+        }
+
+        /* Formulario de jugadores */
+        .player-form {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .player-form input,
+        .player-form select,
+        .player-form button {
+            padding: 0.5rem 1rem;
+            border: 1px solid var(--color-accent-cyan);
+            background-color: var(--color-background);
+            color: var(--color-text);
+            border-radius: 4px;
+        }
+
+        .player-form button {
+            background-color: var(--color-accent-cyan);
+            color: var(--color-background);
+            cursor: pointer;
+            transition: opacity 0.3s;
+        }
+
+        .player-form button:hover {
+            opacity: 0.9;
+        }
+
+        /* Lista de jugadores */
+        .rank-display {
+            cursor: pointer;
+            padding: 0.2rem 0.5rem;
+            border-radius: 4px;
+            background-color: var(--color-accent-cyan);
+            color: var(--color-background);
+        }
+
+        .rank-display:hover {
+            opacity: 0.9;
+        }
+
+        .rank-select {
+            padding: 0.2rem 0.5rem;
+            border: 1px solid var(--color-accent-cyan);
+            background-color: var(--color-background);
+            color: var(--color-text);
+            border-radius: 4px;
+        }
+
+        /* Lista de jugadores */
+        .players-list {
+            list-style: none;
+        }
+
+        .player-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem;
+            margin-bottom: 0.5rem;
+            background-color: var(--color-background);
+            border-radius: 4px;
+        }
+
+        .player-info {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .player-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .btn {
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: opacity 0.3s;
+        }
+
+        .btn-delete {
+            background-color: #ff4655;
+            color: white;
+        }
+
+        .btn-edit {
+            background-color: var(--color-accent-gold);
+            color: var(--color-background);
+        }
+
+        .btn:hover {
+            opacity: 0.9;
+        }
+
+        /* Controles Globales */
+        .global-controls {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            padding: 1rem;
+            background-color: var(--color-container);
+            border-radius: 8px;
+            border: 2px solid var(--color-accent-gold);
+        }
+
+        .btn-export {
+            background-color: var(--color-accent-gold);
+            color: var(--color-background);
+            font-weight: 600;
+        }
+
+        .btn-import {
+            background-color: var(--color-accent-cyan);
+            color: var(--color-background);
+            font-weight: 600;
+        }
+
+        .ranking-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1rem;
+        }
+
+        .ranking-table th,
+        .ranking-table td {
+            padding: 0.8rem;
+            text-align: left;
+            border-bottom: 1px solid var(--color-accent-gold);
+        }
+
+        .ranking-table th {
+            background-color: var(--color-background);
+            color: var(--color-accent-gold);
+        }
+
+        .ranking-table tr:hover {
+            background-color: rgba(10, 200, 185, 0.1);
+        }
+
+        .power-points {
+            color: var(--color-accent-cyan);
+            font-weight: bold;
+        }
+
+        /* Estilos para el Creador de Equipos */
+        .team-builder {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+        }
+
+        .team-container {
+            background-color: var(--color-background);
+            padding: 1rem;
+            border-radius: 8px;
+            min-height: 300px;
+        }
+
+        .team-blue {
+            border: 2px solid #0AC8B9;
+        }
+
+        .team-red {
+            border: 2px solid #ff4655;
+        }
+
+        .team-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px solid var(--color-accent-gold);
+        }
+
+        .team-header h3 {
+            margin: 0;
+        }
+
+        .team-power {
+            font-weight: bold;
+            color: var(--color-accent-cyan);
+        }
+
+        .team-players {
+            list-style: none;
+        }
+
+        .team-player {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.5rem;
+            margin-bottom: 0.5rem;
+            background-color: var(--color-container);
+            border-radius: 4px;
+        }
+
+        .player-selection {
+            margin-bottom: 2rem;
+        }
+
+        .player-selection .btn-add-blue {
+            background-color: #0AC8B9;
+            color: var(--color-background);
+        }
+
+        .player-selection .btn-add-red {
+            background-color: #ff4655;
+            color: var(--color-background);
+        }
+
+        .team-controls {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+
+        .btn-victory-blue {
+            background-color: #0AC8B9;
+            color: var(--color-background);
+        }
+
+        .btn-victory-red {
+            background-color: #ff4655;
+            color: var(--color-background);
+        }
+
+        .btn[disabled] {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        /* Estilos para Configuración */
+        .config-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+        }
+
+        .config-section h3 {
+            color: var(--color-accent-cyan);
+            margin-bottom: 1rem;
+            font-size: 1.1rem;
+        }
+
+        .config-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 0.8rem;
+        }
+
+        .config-item {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            align-items: center;
+            padding: 0.5rem;
+            background-color: var(--color-background);
+            border-radius: 4px;
+        }
+
+        .config-item label {
+            color: var(--color-text);
+        }
+
+        .config-item input {
+            padding: 0.4rem;
+            border: 1px solid var(--color-accent-cyan);
+            background-color: var(--color-container);
+            color: var(--color-text);
+            border-radius: 4px;
+            text-align: center;
+        }
+
+        @media (max-width: 768px) {
+            .config-container {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Torneo de League of Legends</h1>
+
+        <!-- Controles Globales de Datos -->
+        <div class="global-controls">
+            <button class="btn btn-export" onclick="exportData()">Exportar Datos</button>
+            <input type="file" id="importFile" accept=".json" style="display: none;" onchange="importData(event)">
+            <button class="btn btn-import" onclick="document.getElementById('importFile').click()">Importar Datos</button>
+        </div>
+
+        <!-- Sección de Configuración -->
+        <section class="section">
+            <h2>Configuración de Puntos</h2>
+            <div class="config-container">
+                <div class="config-section">
+                    <h3>Puntos de Poder por Rango</h3>
+                    <div class="config-grid" id="rankPointsConfig"></div>
+                </div>
+                <div class="config-section">
+                    <h3>Puntos por Posición en Ranking</h3>
+                    <div class="config-grid" id="victoryPointsConfig"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Sección de Administración de Jugadores -->
+        <section class="section">
+            <h2>Administración de Jugadores</h2>
+            <form class="player-form" id="playerForm">
+                <input type="text" id="playerName" placeholder="Nombre del jugador" required>
+                <select id="playerRank" required>
+                    <option value="">Selecciona un rango</option>
+                    <option value="Hierro">Hierro</option>
+                    <option value="Bronce">Bronce</option>
+                    <option value="Plata">Plata</option>
+                    <option value="Oro">Oro</option>
+                    <option value="Platino">Platino</option>
+                    <option value="Esmeralda">Esmeralda</option>
+                </select>
+                <button type="submit">Añadir Jugador</button>
+            </form>
+            <ul class="players-list" id="playersList"></ul>
+        </section>
+
+        <!-- Sección de Ranking de Victorias -->
+        <section class="section">
+            <h2>Ranking de Victorias</h2>
+            <div id="rankingList"></div>
+        </section>
+
+        <!-- Sección de Creador de Equipos -->
+        <section class="section">
+            <h2>Creador de Equipos</h2>
+            <div class="player-selection">
+                <table class="ranking-table">
+                    <thead>
+                        <tr>
+                            <th>Jugador</th>
+                            <th>Rango</th>
+                            <th>Puntos de Poder</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody id="playerSelectionList"></tbody>
+                </table>
+            </div>
+            <div class="team-builder">
+                <div class="team-container team-blue">
+                    <div class="team-header">
+                        <h3>Equipo Azul</h3>
+                        <span class="team-power" id="bluePower">0 puntos</span>
+                    </div>
+                    <ul class="team-players" id="blueTeamList"></ul>
+                </div>
+                <div class="team-container team-red">
+                    <div class="team-header">
+                        <h3>Equipo Rojo</h3>
+                        <span class="team-power" id="redPower">0 puntos</span>
+                    </div>
+                    <ul class="team-players" id="redTeamList"></ul>
+                </div>
+            </div>
+            <div class="team-controls">
+                <button class="btn btn-victory-blue" onclick="declareVictory('blue')" id="blueVictoryBtn" disabled>
+                    Victoria Equipo Azul
+                </button>
+                <button class="btn btn-victory-red" onclick="declareVictory('red')" id="redVictoryBtn" disabled>
+                    Victoria Equipo Rojo
+                </button>
+            </div>
+        </section>
+    </div>
+
+    <script>
+        // Estado de la aplicación
+        let players = [];
+        let blueTeam = [];
+        let redTeam = [];
+
+        // Configuración de puntos de poder
+        const POWER_POINTS = {
+            ranks: {
+                'Hierro': 10,
+                'Bronce': 20,
+                'Plata': 35,
+                'Oro': 55,
+                'Platino': 80,
+                'Esmeralda': 110
+            },
+            // Los puntos por posición: el que tiene más victorias (1º) recibe más puntos adicionales
+            victoryPositions: [50, 40, 35, 30, 25, 20, 15, 10, 5, 0]
+        };
+
+        // Funciones de utilidad
+        function generateId() {
+            return Date.now();
+        }
+
+        // Cálculo de puntos de poder
+        function calculateBasePowerPoints(rank) {
+            return POWER_POINTS.ranks[rank] || 0;
+        }
+
+        function getVictoryRanking() {
+            // Ordenar jugadores por victorias (de mayor a menor) y luego por id para consistencia
+            return [...players].sort((a, b) => {
+                if (b.victorias !== a.victorias) {
+                    return b.victorias - a.victorias;
+                }
+                return a.id - b.id; // En caso de empate, ordenar por id
+            });
+        }
+
+        function calculateVictoryPoints(player) {
+            // Obtener el ranking ordenado por victorias
+            const victoryRanking = getVictoryRanking();
+            
+            // Encontrar la posición del jugador en el ranking (índice en el array ordenado)
+            const position = victoryRanking.findIndex(p => p.id === player.id);
+            
+            // Si el jugador está en el top 10, asignar puntos según su posición
+            if (position >= 0 && position < POWER_POINTS.victoryPositions.length) {
+                return POWER_POINTS.victoryPositions[position];
+            }
+            return 0;
+        }
+
+        function calculateTotalPowerPoints(player) {
+            const basePower = calculateBasePowerPoints(player.rango);
+            const victoryPower = calculateVictoryPoints(player);
+            return basePower + victoryPower;
+        }
+
+        function getRankedPlayers() {
+            // Primero calculamos los puntos totales para cada jugador
+            const playersWithPoints = players.map(player => ({
+                ...player,
+                powerPoints: calculateTotalPowerPoints(player)
+            }));
+
+            // Luego ordenamos por puntos totales de mayor a menor
+            return playersWithPoints.sort((a, b) => b.powerPoints - a.powerPoints);
+        }
+
+        // Funciones para manejar jugadores
+        function addPlayer(name, rank) {
+            const player = {
+                id: generateId(),
+                nombre: name,
+                rango: rank,
+                victorias: 0
+            };
+            players.push(player);
+            updateUI();
+        }
+
+        function deletePlayer(id) {
+            players = players.filter(player => player.id !== id);
+            updateUI();
+        }
+
+        function editPlayerRank(id, newRank) {
+            const player = players.find(player => player.id === id);
+            if (player) {
+                player.rango = newRank;
+                updateUI();
+            }
+        }
+
+        // Funciones de persistencia
+        function exportData() {
+            const data = {
+                players: players,
+                config: {
+                    rankPoints: POWER_POINTS.ranks,
+                    victoryPositions: POWER_POINTS.victoryPositions
+                }
+            };
+            
+            const jsonString = JSON.stringify(data, null, 2);
+            const blob = new Blob([jsonString], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'torneo_lol.json';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+
+        function importData(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    try {
+                        const importedData = JSON.parse(e.target.result);
+                        
+                        // Verificar si es el formato antiguo (solo array de jugadores) o el nuevo formato
+                        if (Array.isArray(importedData)) {
+                            // Formato antiguo: solo jugadores
+                            players = importedData;
+                        } else if (importedData.players) {
+                            // Formato nuevo: con configuración
+                            players = importedData.players || [];
+                            
+                            // Importar configuración si existe
+                            if (importedData.config) {
+                                if (importedData.config.rankPoints) {
+                                    POWER_POINTS.ranks = importedData.config.rankPoints;
+                                }
+                                if (importedData.config.victoryPositions) {
+                                    POWER_POINTS.victoryPositions = importedData.config.victoryPositions;
+                                }
+                            }
+                        }
+                        
+                        updateUI();
+                    } catch (error) {
+                        alert('Error al importar el archivo: ' + error.message);
+                    }
+                };
+                reader.readAsText(file);
+            }
+            // Resetear el input para permitir importar el mismo archivo nuevamente
+            event.target.value = '';
+        }
+
+        function updateRankingList() {
+            const rankingList = document.getElementById('rankingList');
+            // Ordenar por victorias (de mayor a menor) para la visualización
+            const rankedPlayers = [...players]
+                .sort((a, b) => b.victorias - a.victorias)
+                .map(player => ({
+                    ...player,
+                    powerPoints: calculateTotalPowerPoints(player)
+                }));
+            
+            let html = `
+                <table class="ranking-table">
+                    <thead>
+                        <tr>
+                            <th>Posición</th>
+                            <th>Jugador</th>
+                            <th>Rango</th>
+                            <th>Victorias</th>
+                            <th>Poder Base</th>
+                            <th>Poder Victorias</th>
+                            <th>Puntos de Poder</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+            `;
+
+            rankedPlayers.forEach((player, index) => {
+                const basePower = calculateBasePowerPoints(player.rango);
+                const victoryPower = calculateVictoryPoints(player);
+                const totalPower = basePower + victoryPower;
+
+                html += `
+                    <tr>
+                        <td>${index + 1}</td>
+                        <td>${player.nombre}</td>
+                        <td>${player.rango}</td>
+                        <td>${player.victorias}</td>
+                        <td>${basePower}</td>
+                        <td>${victoryPower}</td>
+                        <td class="power-points">${totalPower}</td>
+                    </tr>
+                `;
+            });
+
+            html += '</tbody></table>';
+            rankingList.innerHTML = html;
+        }
+
+        // Funciones de actualización de UI
+        function updateUI() {
+            updatePlayersList();
+            updateRankingList();
+        }
+
+        function updatePlayersList() {
+            const playersList = document.getElementById('playersList');
+            playersList.innerHTML = '';
+
+            getRankedPlayers().forEach(player => {
+                const li = document.createElement('li');
+                li.className = 'player-item';
+                li.innerHTML = `
+                    <div class="player-info">
+                        <span>${player.nombre}</span>
+                        <span class="rank-display" onclick="makeRankEditable(${player.id}, this)">${player.rango}</span>
+                        <span>Victorias: ${player.victorias}</span>
+                    </div>
+                    <div class="player-actions">
+                        <button class="btn btn-delete" onclick="deletePlayer(${player.id})">
+                            Eliminar
+                        </button>
+                    </div>
+                `;
+                playersList.appendChild(li);
+            });
+        }
+
+        function makeRankEditable(playerId, element) {
+            const ranks = ['Hierro', 'Bronce', 'Plata', 'Oro', 'Platino', 'Esmeralda'];
+            const player = players.find(player => player.id === playerId);
+            if (!player) return;
+
+            const select = document.createElement('select');
+            select.className = 'rank-select';
+            
+            ranks.forEach(rank => {
+                const option = document.createElement('option');
+                option.value = rank;
+                option.text = rank;
+                option.selected = rank === player.rango;
+                select.appendChild(option);
+            });
+
+            select.addEventListener('change', (e) => {
+                editPlayerRank(playerId, e.target.value);
+                element.textContent = e.target.value;
+                element.style.display = 'inline';
+                select.remove();
+            });
+
+            select.addEventListener('blur', () => {
+                element.style.display = 'inline';
+                select.remove();
+            });
+
+            element.style.display = 'none';
+            element.parentNode.insertBefore(select, element.nextSibling);
+            select.focus();
+        }
+
+        // Funciones de equipo
+        function addToTeam(playerId, team) {
+            const player = players.find(p => p.id === playerId);
+            if (!player) return;
+
+            if (team === 'blue' && blueTeam.length < 5) {
+                blueTeam.push(player);
+            } else if (team === 'red' && redTeam.length < 5) {
+                redTeam.push(player);
+            }
+            updateUI();
+        }
+
+        function removeFromTeam(playerId, team) {
+            if (team === 'blue') {
+                blueTeam = blueTeam.filter(p => p.id !== playerId);
+            } else if (team === 'red') {
+                redTeam = redTeam.filter(p => p.id !== playerId);
+            }
+            updateUI();
+        }
+
+        function calculateTeamPower(team) {
+            return team.reduce((total, player) => {
+                const playerWithPower = getRankedPlayers().find(p => p.id === player.id);
+                return total + (playerWithPower ? playerWithPower.powerPoints : 0);
+            }, 0);
+        }
+
+        function updateTeamsList() {
+            // Actualizar lista de equipo azul
+            const blueTeamList = document.getElementById('blueTeamList');
+            blueTeamList.innerHTML = blueTeam.map(player => `
+                <li class="team-player">
+                    <span>${player.nombre} (${player.rango})</span>
+                    <button class="btn btn-delete" onclick="removeFromTeam(${player.id}, 'blue')">Quitar</button>
+                </li>
+            `).join('');
+            
+            // Actualizar lista de equipo rojo
+            const redTeamList = document.getElementById('redTeamList');
+            redTeamList.innerHTML = redTeam.map(player => `
+                <li class="team-player">
+                    <span>${player.nombre} (${player.rango})</span>
+                    <button class="btn btn-delete" onclick="removeFromTeam(${player.id}, 'red')">Quitar</button>
+                </li>
+            `).join('');
+
+            // Actualizar puntos de poder de los equipos
+            document.getElementById('bluePower').textContent = `${calculateTeamPower(blueTeam)} puntos`;
+            document.getElementById('redPower').textContent = `${calculateTeamPower(redTeam)} puntos`;
+
+            // Actualizar botones de victoria
+            document.getElementById('blueVictoryBtn').disabled = blueTeam.length === 0;
+            document.getElementById('redVictoryBtn').disabled = redTeam.length === 0;
+
+            // Actualizar lista de selección de jugadores
+            const playerSelectionList = document.getElementById('playerSelectionList');
+            const assignedPlayers = [...blueTeam, ...redTeam].map(p => p.id);
+            
+            playerSelectionList.innerHTML = getRankedPlayers()
+                .filter(player => !assignedPlayers.includes(player.id))
+                .map(player => `
+                    <tr>
+                        <td>${player.nombre}</td>
+                        <td>${player.rango}</td>
+                        <td class="power-points">${player.powerPoints}</td>
+                        <td>
+                            <button class="btn btn-add-blue" onclick="addToTeam(${player.id}, 'blue')"
+                                ${blueTeam.length >= 5 ? 'disabled' : ''}>
+                                Añadir al Azul
+                            </button>
+                            <button class="btn btn-add-red" onclick="addToTeam(${player.id}, 'red')"
+                                ${redTeam.length >= 5 ? 'disabled' : ''}>
+                                Añadir al Rojo
+                            </button>
+                        </td>
+                    </tr>
+                `).join('');
+        }
+
+        function declareVictory(team) {
+            const winningTeam = team === 'blue' ? blueTeam : redTeam;
+            
+            // Incrementar victorias para el equipo ganador
+            winningTeam.forEach(player => {
+                const p = players.find(p => p.id === player.id);
+                if (p) p.victorias++;
+            });
+
+            // Limpiar equipos
+            blueTeam = [];
+            redTeam = [];
+
+            // Actualizar UI
+            updateUI();
+        }
+
+        // Funciones de configuración
+        function updateRankPointsConfig() {
+            const container = document.getElementById('rankPointsConfig');
+            const ranks = Object.keys(POWER_POINTS.ranks);
+            
+            container.innerHTML = ranks.map(rank => `
+                <div class="config-item">
+                    <label>${rank}</label>
+                    <input type="number" 
+                           value="${POWER_POINTS.ranks[rank]}" 
+                           onchange="updateRankPoints('${rank}', this.value)"
+                           min="0">
+                </div>
+            `).join('');
+        }
+
+        function updateVictoryPointsConfig() {
+            const container = document.getElementById('victoryPointsConfig');
+            
+            container.innerHTML = POWER_POINTS.victoryPositions.map((points, index) => `
+                <div class="config-item">
+                    <label>Posición ${index + 1}º</label>
+                    <input type="number" 
+                           value="${points}" 
+                           onchange="updateVictoryPoints(${index}, this.value)"
+                           min="0">
+                </div>
+            `).join('');
+        }
+
+        function updateRankPoints(rank, value) {
+            POWER_POINTS.ranks[rank] = parseInt(value) || 0;
+            updateUI();
+        }
+
+        function updateVictoryPoints(position, value) {
+            POWER_POINTS.victoryPositions[position] = parseInt(value) || 0;
+            updateUI();
+        }
+
+        // Actualizar la función updateUI para incluir los equipos y configuración
+        function updateUI() {
+            updatePlayersList();
+            updateRankingList();
+            updateTeamsList();
+            updateRankPointsConfig();
+            updateVictoryPointsConfig();
+        }
+
+        // Event Listeners
+        document.getElementById('playerForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const nameInput = document.getElementById('playerName');
+            const rankInput = document.getElementById('playerRank');
+
+            if (nameInput.value && rankInput.value) {
+                addPlayer(nameInput.value, rankInput.value);
+                nameInput.value = '';
+                rankInput.value = '';
+            }
+        });
+
+        // Inicializar la configuración al cargar la página
+        document.addEventListener('DOMContentLoaded', () => {
+            updateRankPointsConfig();
+            updateVictoryPointsConfig();
+        });
+    </script>
+</body>
+</html>
