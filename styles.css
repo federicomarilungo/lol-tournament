@@ -189,6 +189,38 @@ h1, h2 {
     font-style: italic;
 }
 
+.welcome-text.surprise {
+    border-left-color: var(--color-accent-cyan);
+    background: linear-gradient(135deg, rgba(10, 200, 185, 0.1), rgba(10, 200, 185, 0.05));
+    font-weight: 600;
+    animation: glow 2s ease-in-out infinite alternate;
+}
+
+.welcome-text.sponsor {
+    border-left-color: var(--color-accent-gold);
+    background: linear-gradient(135deg, rgba(200, 155, 60, 0.2), rgba(200, 155, 60, 0.1));
+    font-size: 1.1rem;
+    text-align: center;
+    border-radius: 8px;
+    border: 2px solid var(--color-accent-gold);
+    box-shadow: 0 4px 15px rgba(200, 155, 60, 0.3);
+}
+
+.welcome-text.sponsor strong {
+    color: var(--color-accent-gold);
+    font-size: 1.2rem;
+    text-shadow: 0 0 10px rgba(200, 155, 60, 0.5);
+}
+
+@keyframes glow {
+    from {
+        box-shadow: 0 0 5px rgba(10, 200, 185, 0.3);
+    }
+    to {
+        box-shadow: 0 0 15px rgba(10, 200, 185, 0.6);
+    }
+}
+
 .welcome-emoji {
     font-size: 2rem;
     margin: 0 0.5rem;

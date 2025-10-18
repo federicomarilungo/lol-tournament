@@ -1,0 +1,96 @@
+{
+  "players": [
+    {
+      "id": 1729180800000,
+      "nombre": "Huesito",
+      "rango": "Esmeralda",
+      "victorias": 0
+    },
+    {
+      "id": 1729180800001,
+      "nombre": "Cremas",
+      "rango": "Esmeralda",
+      "victorias": 0
+    },
+    {
+      "id": 1729180800002,
+      "nombre": "Liendo",
+      "rango": "Platino",
+      "victorias": 0
+    },
+    {
+      "id": 1729180800003,
+      "nombre": "Coco",
+      "rango": "Platino",
+      "victorias": 0
+    },
+    {
+      "id": 1729180800004,
+      "nombre": "Chino",
+      "rango": "Oro",
+      "victorias": 0
+    },
+    {
+      "id": 1729180800005,
+      "nombre": "Pañales",
+      "rango": "Oro",
+      "victorias": 0
+    },
+    {
+      "id": 1729180800006,
+      "nombre": "Kid",
+      "rango": "Plata",
+      "victorias": 0
+    },
+    {
+      "id": 1729180800007,
+      "nombre": "Calordo",
+      "rango": "Bronce",
+      "victorias": 0
+    },
+    {
+      "id": 1729180800008,
+      "nombre": "Owen",
+      "rango": "Bronce",
+      "victorias": 0
+    },
+    {
+      "id": 1729180800009,
+      "nombre": "Primo Rojo",
+      "rango": "Bronce",
+      "victorias": 0
+    },
+    {
+      "id": 1729180800010,
+      "nombre": "Maurito",
+      "rango": "Hierro",
+      "victorias": 0
+    }
+  ],
+  "config": {
+    "rankPoints": {
+      "Hierro": 10,
+      "Bronce": 20,
+      "Plata": 35,
+      "Oro": 55,
+      "Platino": 80,
+      "Esmeralda": 110,
+      "Diamante": 150,
+      "Maestro": 200,
+      "Gran Maestro": 270,
+      "Aspirante": 350
+    },
+    "victoryPositions": [
+      50,
+      40,
+      35,
+      30,
+      25,
+      20,
+      15,
+      10,
+      5,
+      0
+    ]
+  }
+}
